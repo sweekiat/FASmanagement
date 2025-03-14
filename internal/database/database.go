@@ -26,7 +26,6 @@ func ConnectDB() {
         DBName: os.Getenv("RDS_DB_NAME"),
         AllowNativePasswords: true,
     }
-    // Get a database handle.
     var err error
     db, err = sql.Open("mysql", cfg.FormatDSN())
     if err != nil {
@@ -41,6 +40,9 @@ func ConnectDB() {
 }
 
 func GetDB() *sql.DB {
+        if db == nil {
+                ConnectDB()
+        }
         return db
 }
 
