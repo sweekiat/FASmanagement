@@ -5,6 +5,7 @@ import (
 	"FASManagementSystem/internal/models"
 	"database/sql"
 )
+
 func GetAllApplicantsWithHousehold() ([]models.Applicant, error) {
 	db := database.GetDB()
 	rows, err := db.Query(`
@@ -59,6 +60,8 @@ func GetAllApplicantsWithHousehold() ([]models.Applicant, error) {
 				DateOfBirth:      householdDateOfBirth.String,
 				Relation:         householdRelation.String,
 			})
+		} else {
+			applicant.HouseholdMembers = []models.HouseholdMember{}
 		}
 	}
 	if err := rows.Err(); err != nil {
@@ -69,4 +72,44 @@ func GetAllApplicantsWithHousehold() ([]models.Applicant, error) {
 		applicants = append(applicants, *applicant)
 	}
 	return applicants, nil
+}
+
+// TODO do i need to make sure that if one insert fails i rollback the whole transaction
+func CreateNewApplicant(applicant models.Applicant) error {
+	db := database.GetDB()
+	householdMembers := applicant.HouseholdMembers
+	if applicant.MaritalStatus == "" {
+		applicant.MaritalStatus = "Single"
+	}
+	_, err := db.Exec(`
+                INSERT INTO applicants (
+						id,
+                        name,
+                        employment_status,
+                        marital_status,
+                        sex,
+                        date_of_birth
+                ) VALUES (?, ?, ?, ?, ?, ?)
+        `, applicant.ID, applicant.Name, applicant.EmploymentStatus, applicant.MaritalStatus, applicant.Sex, applicant.DateOfBirth)
+	if err != nil {
+		return err
+	}
+	for _, householdMember := range householdMembers {
+		_, insertErr := db.Exec(`
+                INSERT INTO household_members (
+						id,
+                        applicant_id,
+                        name,
+                        employment_status,
+                        sex,
+                        date_of_birth,
+                        relation
+                ) VALUES (?,?, ?, ?, ?, ?, ?)
+        `, householdMember.ID, applicant.ID, householdMember.Name, householdMember.EmploymentStatus, householdMember.Sex, householdMember.DateOfBirth, householdMember.Relation)
+		if insertErr != nil {
+			return insertErr
+		}
+	}
+
+	return nil
 }
