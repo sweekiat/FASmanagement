@@ -74,14 +74,19 @@ func GetAllApplicantsWithHousehold() ([]models.Applicant, error) {
 	return applicants, nil
 }
 
-// TODO do i need to make sure that if one insert fails i rollback the whole transaction
+
 func CreateNewApplicant(applicant models.Applicant) error {
 	db := database.GetDB()
+	tx, dbErr := db.Begin()
+	if dbErr != nil {
+		return dbErr
+	}
+
 	householdMembers := applicant.HouseholdMembers
 	if applicant.MaritalStatus == "" {
 		applicant.MaritalStatus = "Single"
 	}
-	_, err := db.Exec(`
+	_, err := tx.Exec(`
                 INSERT INTO applicants (
 						id,
                         name,
@@ -92,10 +97,11 @@ func CreateNewApplicant(applicant models.Applicant) error {
                 ) VALUES (?, ?, ?, ?, ?, ?)
         `, applicant.ID, applicant.Name, applicant.EmploymentStatus, applicant.MaritalStatus, applicant.Sex, applicant.DateOfBirth)
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
 	for _, householdMember := range householdMembers {
-		_, insertErr := db.Exec(`
+		_, insertErr := tx.Exec(`
                 INSERT INTO household_members (
 						id,
                         applicant_id,
@@ -107,7 +113,12 @@ func CreateNewApplicant(applicant models.Applicant) error {
                 ) VALUES (?,?, ?, ?, ?, ?, ?)
         `, householdMember.ID, applicant.ID, householdMember.Name, householdMember.EmploymentStatus, householdMember.Sex, householdMember.DateOfBirth, householdMember.Relation)
 		if insertErr != nil {
+			tx.Rollback()
 			return insertErr
+		}
+		txErr := tx.Commit()
+		if txErr != nil {
+			return txErr
 		}
 	}
 
