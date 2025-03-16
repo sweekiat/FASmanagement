@@ -74,7 +74,6 @@ func GetAllApplicantsWithHousehold() ([]models.Applicant, error) {
 	return applicants, nil
 }
 
-
 func CreateNewApplicant(applicant models.Applicant) error {
 	db := database.GetDB()
 	tx, dbErr := db.Begin()
