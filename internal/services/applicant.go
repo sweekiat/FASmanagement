@@ -123,3 +123,38 @@ func CreateNewApplicant(applicant models.Applicant) error {
 
 	return nil
 }
+
+func DeleteApplicant(id string) error {
+	db := database.GetDB()
+	tx, dbErr := db.Begin()
+	if dbErr != nil {
+		return dbErr
+	}
+
+	_, err := tx.Exec(`
+		DELETE FROM household_members WHERE applicant_id = ?
+	`, id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = tx.Exec(`
+		DELETE FROM applications WHERE applicant_id = ?
+	`, id)
+	if err != nil {
+		tx.Rollback()
+	}
+	_, err = tx.Exec(`
+		DELETE FROM applicants WHERE id = ?
+	`, id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	txErr := tx.Commit()
+	if txErr != nil {
+		return txErr
+	}
+
+	return nil
+}

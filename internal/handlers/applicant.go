@@ -30,4 +30,12 @@ func CreateNewApplicantHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, newApplicant)
 }
 
-
+func DeleteApplicantHandler(c *gin.Context) {
+	id := c.Param("id")
+	err := services.DeleteApplicant(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+}
