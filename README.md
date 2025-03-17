@@ -1,6 +1,7 @@
 # FASManagementSystem
-
 FASManagementSystem
+
+# Please look at the submission where you will find a env.txt file with the credentials needed to get access to my aws rds database!!! Or contact me at sk.wong.2021@business.smu.edu.sg
 
 ### install all the imports
 
