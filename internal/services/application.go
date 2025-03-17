@@ -5,7 +5,7 @@ import (
 	"FASManagementSystem/internal/models"
 )
 
-func GetAllApplications()([]models.Application,error){
+func GetAllApplications() ([]models.Application, error) {
 	db := database.GetDB()
 	rows, err := db.Query(`
         SELECT
@@ -29,13 +29,28 @@ func GetAllApplications()([]models.Application,error){
 			return nil, err
 		}
 		applications = append(applications, models.Application{
-			ID: id,
-			Status: status,
+			ID:          id,
+			Status:      status,
 			ApplicantID: applicant_id,
-			SchemeID: scheme_id,
+			SchemeID:    scheme_id,
 		})
 	}
 	return applications, nil
+}
 
-
+func CreateNewApplication(application models.Application) error {
+	db := database.GetDB()
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(`
+		INSERT INTO applications (id, status, applicant_id, scheme_id)
+		VALUES (?, ?, ?, ?)
+	`, application.ID, application.Status, application.ApplicantID, application.SchemeID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit()
 }

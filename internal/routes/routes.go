@@ -13,5 +13,6 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/api/schemes", handlers.GetAllSchemesHandler)
 	router.GET("/api/applications", handlers.GetAllApplicationsHandler)
 	router.GET("/api/schemes/elligible", handlers.GetAllElligibleSchemesHandler)
+	router.POST("/api/applications", handlers.CreateNewApplicationHandler)
 
 }
