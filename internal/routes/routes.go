@@ -12,5 +12,6 @@ func SetupRoutes(router *gin.Engine) {
 	router.DELETE("/api/applicants/:id", handlers.DeleteApplicantHandler)
 	router.GET("/api/schemes", handlers.GetAllSchemesHandler)
 	router.GET("/api/applications", handlers.GetAllApplicationsHandler)
+	router.GET("/api/schemes/elligible", handlers.GetAllElligibleSchemesHandler)
 
 }

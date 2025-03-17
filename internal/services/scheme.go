@@ -28,12 +28,12 @@ func GetAllSchemes() ([]models.Scheme, error) {
 
 	for rows.Next() {
 		var (
-			schemeID, schemeName,description, criteriaSQL, benefitID, benefitName sql.NullString
-			benefitAmount                                             sql.NullInt32
+			schemeID, schemeName, description, criteriaSQL, benefitID, benefitName sql.NullString
+			benefitAmount                                                          sql.NullInt32
 		)
 
 		err := rows.Scan(
-			&schemeID, &schemeName,&description, &criteriaSQL, &benefitID, &benefitName, &benefitAmount,
+			&schemeID, &schemeName, &description, &criteriaSQL, &benefitID, &benefitName, &benefitAmount,
 		)
 		if err != nil {
 			return nil, err
@@ -42,10 +42,10 @@ func GetAllSchemes() ([]models.Scheme, error) {
 		scheme, exists := schemeMap[schemeID.String]
 		if !exists {
 			scheme = &models.Scheme{
-				ID:       schemeID.String,
-				Name:     schemeName.String,
+				ID:          schemeID.String,
+				Name:        schemeName.String,
 				Description: description.String,
-				Benefits: []models.Benefit{}, 
+				Benefits:    []models.Benefit{},
 			}
 
 			if criteriaSQL.Valid {
@@ -78,3 +78,18 @@ func GetAllSchemes() ([]models.Scheme, error) {
 
 	return schemes, nil
 }
+
+func GetElligibleSchemes(applicant models.Applicant) ([]models.Scheme, error) {
+	schemes, err := GetAllSchemes()
+	if err != nil {
+		return nil, err
+	}
+	var elligibleSchemes []models.Scheme
+	for _, scheme := range schemes {
+		if scheme.IsElligible(applicant) {
+			elligibleSchemes = append(elligibleSchemes, scheme)
+		}
+	}
+	return elligibleSchemes, nil
+}
+

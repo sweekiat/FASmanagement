@@ -115,10 +115,11 @@ func CreateNewApplicant(applicant models.Applicant) error {
 			tx.Rollback()
 			return insertErr
 		}
-		txErr := tx.Commit()
-		if txErr != nil {
-			return txErr
-		}
+
+	}
+	txErr := tx.Commit()
+	if txErr != nil {
+		return txErr
 	}
 
 	return nil
@@ -151,10 +152,57 @@ func DeleteApplicant(id string) error {
 		tx.Rollback()
 		return err
 	}
-	txErr := tx.Commit()
-	if txErr != nil {
-		return txErr
+	return nil
+}
+
+func GetApplicantById(id string) (models.Applicant, error) {
+	db := database.GetDB()
+	row := db.QueryRow(`SELECT id, name, employment_status, marital_status, sex, date_of_birth FROM applicants WHERE id = ?`, id)
+
+	var applicant models.Applicant
+
+	err := row.Scan(
+		&applicant.ID,
+		&applicant.Name,
+		&applicant.EmploymentStatus,
+		&applicant.MaritalStatus,
+		&applicant.Sex,
+		&applicant.DateOfBirth,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return models.Applicant{}, err
+		}
+		return models.Applicant{}, err
+	}
+	hhRows, err := db.Query(`SELECT 
+						id,
+                        applicant_id,
+                        name,
+                        employment_status,
+                        sex,
+                        date_of_birth,
+                        relation FROM household_members WHERE applicant_id = ?`, id)
+	if err != nil {
+		return models.Applicant{}, err
+	}
+	defer hhRows.Close()
+	for hhRows.Next() {
+		var householdMember models.HouseholdMember
+		err := hhRows.Scan(
+			&householdMember.ID,
+			&householdMember.ApplicantID,
+			&householdMember.Name,
+			&householdMember.EmploymentStatus,
+			&householdMember.Sex,
+			&householdMember.DateOfBirth,
+			&householdMember.Relation)
+		if err != nil {
+			return models.Applicant{}, err
+		}
+		applicant.HouseholdMembers = append(applicant.HouseholdMembers, householdMember)
 	}
 
-	return nil
+	return applicant, nil
 }
