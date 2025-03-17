@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "b72539cf-6f00-434e-bb7e-465c1e4aa139",
+		"name": "FASManagementSystem",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26525395"
+	},
+	"item": [
+		{
+			"name": "GetAllApplicants",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/applicants",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"applicants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateNewApplicant",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"id\": \"01913b80-2c04-7f9d-86a4-497ef68cb3a1\",\n      \"name\": \"Mariana\",\n      \"employment_status\": \"Unemployed\",\n      \"sex\": \"female\",\n      \"date_of_birth\": \"1984-10-06\",\n      \"household\": [\n        {\n          \"id\": \"01913b88-1d4d-7152-a7ce-75796a2e8ece\",\n          \"name\": \"Gwen\",\n          \"employment_status\": \"Unemployed\",\n          \"sex\": \"female\",\n          \"date_of_birth\": \"2016-02-01\",\n          \"relation\": \"daughter\"\n        },\n        {\n          \"id\": \"01913b88-65c6-7255-820f-9c4dd1e5ce78\",\n          \"name\": \"Jayden\",\n          \"employment_status\": \"Unemployed\",\n          \"sex\": \"male\",\n          \"date_of_birth\": \"2018-03-15\",\n          \"relation\": \"son\"\n        }\n      ]\n    }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/applicants",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"applicants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllSchemes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/schemes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"schemes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllApplications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteApplicant",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/applicants/01913b80-2c04-7f9d-86a4-497ef68cb3a1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"applicants",
+						"01913b80-2c04-7f9d-86a4-497ef68cb3a1"
+					]
+				},
+				"description": "Deletes applicant with 01913b80-2c04-7f9d-86a4-497ef68cb3a1 id."
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllElligibleSchemes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/schemes/elligible?applicant=81913b80-2c04-7f9d-86a4-497ef68cb3a0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"schemes",
+						"elligible"
+					],
+					"query": [
+						{
+							"key": "applicant",
+							"value": "81913b80-2c04-7f9d-86a4-497ef68cb3a0"
+						}
+					]
+				},
+				"description": "Shows the elligible schemes for Mary"
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllElligibleSchemesJames",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/schemes/elligible?applicant=81913b7a-4493-74b2-93f8-e684c4ca935c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"schemes",
+						"elligible"
+					],
+					"query": [
+						{
+							"key": "applicant",
+							"value": "81913b7a-4493-74b2-93f8-e684c4ca935c"
+						}
+					]
+				},
+				"description": "Different ID, and will notice that one of the schemes becomes unavailable"
+			},
+			"response": []
+		},
+		{
+			"name": "CreateNewApplication",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":\"1\",\"status\":\"pending\",\"applicant_id\":\"81913b7a-4493-74b2-93f8-e684c4ca935c\",\"scheme_id\":\"81913689-9a43-7163-8757-81cc254783f3\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
